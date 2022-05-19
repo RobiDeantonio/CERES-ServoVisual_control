@@ -223,6 +223,7 @@ while not done:
     x, y, w, h = cv2.boundingRect(opening)
 
 
+
     # canvas
 
 

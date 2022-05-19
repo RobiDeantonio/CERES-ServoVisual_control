@@ -250,6 +250,7 @@ while not done:
     x, y, w, h = cv2.boundingRect(opening)
 
 
+
     # canvas
 
 
@@ -269,6 +270,8 @@ while not done:
 
     if enviocont2>0:
         DistanciaObjeto([XO,YO,dmap[YO,XO]])#Se esta vectorizando
+        # cv2.putText(rgb, "P " + str(int(dmap[YO,XO])), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 3,
+        #             (0, 255, 0), 2)
         enviocont2=0
     enviocont2=enviocont2+1
     print('VERDE is {} mm away'.format(dmap[YO,XO]))

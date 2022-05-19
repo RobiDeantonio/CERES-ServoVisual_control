@@ -239,8 +239,12 @@ class Controlador:
 
 #ControlZ=Controlador(np.array([[1,0.0188],[0,0.8823]]),np.array([[-0.0099],[-0.9687]]),
 #                     np.array([[-284.051,14.2561]]),np.array([[1.8823],[41.412]]),np.array([[0],[0]]),0)
-ControlZ=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-939.4591]]),np.array([[1]])
-                     ,np.array([[0]]),0)#Con K=90 funciona muy bien
+ControlZ=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+                     ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
+ControlX=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+                     ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
+ControlY=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+                     ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
 #Controlador
 def Automatico ():
     global stop_threads, DisG, DisO
@@ -251,6 +255,9 @@ def Automatico ():
     guardar=0
     Tinicio=time.time()
     TiControl=Tinicio
+    TiControlY = Tinicio
+    TiControlX = Tinicio
+    Angulo=math.radians(35)##42 en la maquina
     while True:
         #time.sleep(0.001)
         if stop_threads:
@@ -260,59 +267,82 @@ def Automatico ():
             #UObjeto()
             #print(DisO)
             #print(DisG)
-            O = DisO[1]
-            G = DisG[1]
+            O = DisO[1]-240
+            G = DisG[1]-240
             OKA = XX.getDistance(O , 0.005)
             GKA = YY.getDistance(G , 0.005)
+            OKAZ=((OKA*DisO[2]/520))
+            GKAZ=((GKA*DisG[2]/520))
+            OKA=(OKAZ*math.cos(Angulo))-(DisO[2]*math.sin(Angulo))
+            GKA = (GKAZ * math.cos(Angulo)) - (DisG[2] * math.sin(Angulo))
+            print(OKA)
             if(guardar!=1):
                 ControlZ.setXek(np.array([[GKA]]))
             #E = (-10 * 0.66913061 * ((OKA - GKA)))
             TtControl=time.time()
             if (-TiControl+TtControl)>0.02:
-                ControlZ.control(GKA, OKA)
-                Ex = ControlZ.Uk[0,0]
+                ControlZ.control(GKA, round(OKA/100)*100+200)
+                Ez = ControlZ.Uk[0,0]
                 TiControl = TtControl
             #print(-TiControl+TtControl)
-            if -40<(Ex)<40:
+            if -40<(Ez)<40:
                 ACTUADORZ(0)  #
-            elif Ex>5000 or Ex<-5000:
-                ACTUADORZ(np.sign(Ex)*5000)
+            elif Ez>9000 or Ez<-9000:
+                ACTUADORZ(np.sign(Ez)*9000)
             else:
-                ACTUADORZ(Ex)  #
+                ACTUADORZ(Ez)  #
             sheet.write(Contador, 0, OKA)
-            sheet.write(Contador, 1, Ex)
+            sheet.write(Contador, 1, Ez)
             #E=XX.getDistance(E,0.005)
             #print(E)
             sheet.write(Contador, 2, GKA)
             sheet.write(Contador, 9, (time.time()-Tinicio))
             Contador=Contador+1
             #print((O - G))
-            O = DisO[0]
-            G = DisG[0]
+            O = DisO[0]-320
+            G = DisG[0]-320
             #print(-(O - G))
             OKA = XXX.getDistance(O, 0.005)
             GKA = YYY.getDistance(G, 0.005)
             sheet.write(Contador, 3, OKA)
-            E=(-4 * (OKA - GKA))
-            sheet.write(Contador, 4, E)
-            sheet.write(Contador, 5, GKA)
-            if -40<E<40:
-                ACTUADORY(0)
+            #E=(-4 * (OKA - GKA))
+            TtControl = time.time()
+            if (-TiControlY + TtControl) > 0.02:
+                ControlY.control(GKA, round(OKA/100)*100)
+                Ey = ControlY.Uk[0, 0]
+                TiControlY = TtControl
+            if -40 < (Ey) < 40:
+                ACTUADORY(0)  #
+            elif Ey > 9000 or Ey < -9000:
+                ACTUADORY(np.sign(Ey) * 9000)
             else:
-                ACTUADORY(E)#-4
+                ACTUADORY(Ey)  #
+            sheet.write(Contador, 4, Ey)
+            sheet.write(Contador, 5, GKA)
             O = DisO[2]
             G = DisG[2]
             #print(-(O - G))
             OKA = XXXX.getDistance(O, 0.005)
             GKA = YYYY.getDistance(G, 0.005)
+            OKA=OKA*math.cos(Angulo)+OKAZ*math.sin(Angulo)
+            GKA=GKA*math.cos(Angulo)+GKAZ*math.sin(Angulo)
+            print(OKA)
+            print(GKA)
             sheet.write(Contador, 6, OKA)
-            E=(-10 * 0.74314482*(OKA - GKA))#1
-            sheet.write(Contador, 7, E)
+            #E=(-10 * 0.74314482*(OKA - GKA))#1
+            TtControl = time.time()
+            if (-TiControlX + TtControl) > 0.02:
+                ControlX.control(GKA, round(OKA/100)*100)
+                Ex = ControlX.Uk[0, 0]
+                TiControlX = TtControl
+            sheet.write(Contador, 7, Ex)
             sheet.write(Contador, 8, GKA)
-            if -40<E<40:
-                ACTUADORX(0)
+            if -40 < (Ex) < 40:
+                ACTUADORX(0)  #
+            elif Ex > 9000 or Ex < -9000:
+                ACTUADORX(np.sign(Ex) * 9000)
             else:
-                ACTUADORX(E)
+                ACTUADORX(Ex)  #
             guardar = 1
         else:
             try:
