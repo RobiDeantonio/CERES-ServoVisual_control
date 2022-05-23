@@ -1,4 +1,4 @@
-#!/home/johann/catkin_ws/src/tests/Vision-Actuadores-venv/bin/python3
+#!/home/gidam/catkin_ws/src/CERES-ServoVisual_control/tests/ActuadoresVision-env/bin/python3
 
 #Vision CamaraPrimesense
 import numpy as np
@@ -47,10 +47,6 @@ Contador = 1
 #ROS y Actuadores librerias
 import threadingJohann as threading
 from threadingJohann import Timer,Thread,Event
-from xlrd import open_workbook
-from xlutils.copy import copy
-import xlrd
-import xlwt
 import os
 import sys
 import time
@@ -244,9 +240,9 @@ ControlZ=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-939.4591]]
 #Controlador
 def Automatico ():
     global stop_threads, DisG, DisO
-    Workbook = xlrd.open_workbook("Resultados.xls")
-    wb = copy(Workbook)
-    sheet = wb.get_sheet(0)
+    #Workbook = xlrd.open_workbook("Resultados.xls")
+    #wb = copy(Workbook)
+    #sheet = wb.get_sheet(0)
     Contador=1
     guardar=0
     Tinicio=time.time()
@@ -279,12 +275,12 @@ def Automatico ():
                 ACTUADORZ(np.sign(Ex)*5000)
             else:
                 ACTUADORZ(Ex)  #
-            sheet.write(Contador, 0, OKA)
-            sheet.write(Contador, 1, Ex)
+            #sheet.write(Contador, 0, OKA)
+            #sheet.write(Contador, 1, Ex)
             #E=XX.getDistance(E,0.005)
             #print(E)
-            sheet.write(Contador, 2, GKA)
-            sheet.write(Contador, 9, (time.time()-Tinicio))
+            #sheet.write(Contador, 2, GKA)
+            #sheet.write(Contador, 9, (time.time()-Tinicio))
             Contador=Contador+1
             #print((O - G))
             O = DisO[0]
@@ -292,10 +288,10 @@ def Automatico ():
             #print(-(O - G))
             OKA = XXX.getDistance(O, 0.005)
             GKA = YYY.getDistance(G, 0.005)
-            sheet.write(Contador, 3, OKA)
+            #sheet.write(Contador, 3, OKA)
             E=(-4 * (OKA - GKA))
-            sheet.write(Contador, 4, E)
-            sheet.write(Contador, 5, GKA)
+            #sheet.write(Contador, 4, E)
+            #sheet.write(Contador, 5, GKA)
             if -40<E<40:
                 ACTUADORY(0)
             else:
@@ -305,10 +301,10 @@ def Automatico ():
             #print(-(O - G))
             OKA = XXXX.getDistance(O, 0.005)
             GKA = YYYY.getDistance(G, 0.005)
-            sheet.write(Contador, 6, OKA)
+            #sheet.write(Contador, 6, OKA)
             E=(-10 * 0.74314482*(OKA - GKA))#1
-            sheet.write(Contador, 7, E)
-            sheet.write(Contador, 8, GKA)
+            #sheet.write(Contador, 7, E)
+            #sheet.write(Contador, 8, GKA)
             if -40<E<40:
                 ACTUADORX(0)
             else:
@@ -318,7 +314,7 @@ def Automatico ():
             try:
                 if guardar==1:
                     guardar=0
-                    wb.save('example2.xls')
+                    #wb.save('example2.xls')
             except:
                 pass
 
