@@ -1,4 +1,5 @@
-#!/home/johann/catkin_ws/src/tests/CamaraDistancia/bin/python3
+#!/home/regulus/catkin_ws/src/CERES-ServoVisual_control/tests/CamaraDistancia/bin/python3
+
 '''
 Created on 19Jun2015
 Stream rgb and depth video side-by-side using openni2 opencv-python (cv2).
@@ -41,7 +42,8 @@ from std_msgs.msg import Float32
 # OMAP
 # dist = '/home/carlos/Install/kinect/OpenNI2-Linux-ARM-2.2/Redist/'
 # Linux
-dist ='/home/johann/Descargas/OppenNI/OpenNI-Linux-x64-2.2/Redist'
+dist ='/home/regulus/Downloads/OpenNI-Linux-x64-2.2.0.33/OpenNI-Linux-x64-2.2/Redist'
+
 
 def DistanciaObjeto(paquete):
     pub = rospy.Publisher("DistanciaObjeto", Float32, queue_size=10)

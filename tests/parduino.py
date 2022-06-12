@@ -286,15 +286,9 @@ def Automatico ():
             elif Ez>9000 or Ez<-9000:
                 ACTUADORZ(np.sign(Ez)*9000)
             else:
-<<<<<<< HEAD
                 ACTUADORZ(Ez)  #
             sheet.write(Contador, 0, OKA)
             sheet.write(Contador, 1, Ez)
-=======
-                ACTUADORZ(Ex)  #
-            #sheet.write(Contador, 0, OKA)
-            #sheet.write(Contador, 1, Ex)
->>>>>>> 837f3f7839551b4674bfe0c9c034a92c6ffd752f
             #E=XX.getDistance(E,0.005)
             #print(E)
             #sheet.write(Contador, 2, GKA)
@@ -306,7 +300,6 @@ def Automatico ():
             #print(-(O - G))
             OKA = XXX.getDistance(O, 0.005)
             GKA = YYY.getDistance(G, 0.005)
-<<<<<<< HEAD
             sheet.write(Contador, 3, OKA)
             #E=(-4 * (OKA - GKA))
             TtControl = time.time()
@@ -318,14 +311,6 @@ def Automatico ():
                 ACTUADORY(0)  #
             elif Ey > 9000 or Ey < -9000:
                 ACTUADORY(np.sign(Ey) * 9000)
-=======
-            #sheet.write(Contador, 3, OKA)
-            E=(-4 * (OKA - GKA))
-            #sheet.write(Contador, 4, E)
-            #sheet.write(Contador, 5, GKA)
-            if -40<E<40:
-                ACTUADORY(0)
->>>>>>> 837f3f7839551b4674bfe0c9c034a92c6ffd752f
             else:
                 ACTUADORY(Ey)  #
             sheet.write(Contador, 4, Ey)
@@ -335,7 +320,6 @@ def Automatico ():
             #print(-(O - G))
             OKA = XXXX.getDistance(O, 0.005)
             GKA = YYYY.getDistance(G, 0.005)
-<<<<<<< HEAD
             OKA=OKA*math.cos(Angulo)+OKAZ*math.sin(Angulo)
             GKA=GKA*math.cos(Angulo)+GKAZ*math.sin(Angulo)
             print(OKA)
@@ -353,14 +337,6 @@ def Automatico ():
                 ACTUADORX(0)  #
             elif Ex > 9000 or Ex < -9000:
                 ACTUADORX(np.sign(Ex) * 9000)
-=======
-            #sheet.write(Contador, 6, OKA)
-            E=(-10 * 0.74314482*(OKA - GKA))#1
-            #sheet.write(Contador, 7, E)
-            #sheet.write(Contador, 8, GKA)
-            if -40<E<40:
-                ACTUADORX(0)
->>>>>>> 837f3f7839551b4674bfe0c9c034a92c6ffd752f
             else:
                 ACTUADORX(Ex)  #
             guardar = 1

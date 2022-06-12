@@ -6,6 +6,8 @@ import numpy as np
 #from primesense import openni2#, nite2
 #from primesense import _openni2 as c_api
 import math
+
+
 class SensorKalman:
     def __init__(self):
         self.Q_distance=1
