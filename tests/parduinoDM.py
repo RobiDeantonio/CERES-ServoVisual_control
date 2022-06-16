@@ -251,7 +251,7 @@ ControlY=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.a
 def Automatico ():
     global stop_threads, DisG, DisO, DisO2, DisSave,GPSSave,situacion
 
-    DisO2 = [[1500, 180, 300], [1500, 180, 300], [1500, 180, 300], [1500, 180, 300]]
+    DisO2 = [[479, 117, 1219], [428, 304, 1883], [194, 302, 1883], [116, 118, 1197]]
     DisSave = []
     estado = []
     ##situacion= jetson
@@ -267,30 +267,21 @@ def Automatico ():
     TiControlY = Tinicio
     TiControlX = Tinicio
     Angulo=math.radians(35)##42 en la maquina
+
+
     while True:
         #time.sleep(0.001)
         if stop_threads:
             if contador<2000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [479, 117, 1219]
             elif contador<4000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [428, 304, 1883]
             elif contador < 6000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [194, 302, 1883]
             elif contador < 8000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [116, 118, 1197]
+            elif contador == 10000:
                 contador=0
-
-            if (mala):
-                DisSave.append(DisG)
-                GPSSave.append(GPSActual)
-                estado.append(situacion)
-
-                if situacion == "a":
-                    print("matar maleza")
-                elif situacion == "b":
-                    print("regar planta")
-                elif situacion == "c":
-                    print("fumigar planta")
 
 
             # t = threading.Thread(target=listener)
