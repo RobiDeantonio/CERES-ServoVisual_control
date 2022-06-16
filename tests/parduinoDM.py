@@ -47,10 +47,6 @@ Contador = 1
 #ROS y Actuadores librerias
 import threadingJohann as threading
 from threadingJohann import Timer,Thread,Event
-from xlrd import open_workbook
-from xlutils.copy import copy
-import xlrd
-import xlwt
 import os
 import sys
 import time
@@ -239,26 +235,26 @@ class Controlador:
 
 #ControlZ=Controlador(np.array([[1,0.0188],[0,0.8823]]),np.array([[-0.0099],[-0.9687]]),
 #                     np.array([[-284.051,14.2561]]),np.array([[1.8823],[41.412]]),np.array([[0],[0]]),0)
-ControlZ=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+ControlZ=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-9]]),np.array([[1]])
                      ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
-ControlX=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+ControlX=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-9]]),np.array([[1]])
                      ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
-ControlY=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+ControlY=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-9]]),np.array([[1]])
                      ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
 #Controlador
 def Automatico ():
     global stop_threads, DisG, DisO, DisO2, DisSave,GPSSave,situacion
 
-    DisO2 = [[1500, 180, 300], [1500, 180, 300], [1500, 180, 300], [1500, 180, 300]]
+    DisO2 = [[479, 117, 1219], [1500, 180, 300], [1500, 180, 300], [1500, 180, 300]]
     DisSave = []
     estado = []
     ##situacion= jetson
 
 
-    Workbook = xlrd.open_workbook("Resultados.xls")
-    wb = copy(Workbook)
-    sheet = wb.get_sheet(0)
-    Contador=1
+    #Workbook = xlrd.open_workbook("Resultados.xls")
+    #wb = copy(Workbook)
+    #sheet = wb.get_sheet(0)
+    contador=1
     guardar=0
     Tinicio=time.time()
     TiControl=Tinicio
@@ -269,26 +265,27 @@ def Automatico ():
         #time.sleep(0.001)
         if stop_threads:
             if contador<2000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [459, 117, 1219]
             elif contador<4000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [428, 304, 1883]
             elif contador < 6000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [210, 302, 1873]
             elif contador < 8000:
-                DisO2 = [1500, 180, 300]
+                DisO2 = [130, 118, 1219]
+            elif contador < 10000:
                 contador=0
 
-            if (mala):
-                DisSave.append(DisG)
-                GPSSave.append(GPSActual)
-                estado.append(situacion)
+            #if (mala):
+            #    DisSave.append(DisG)
+            #    GPSSave.append(GPSActual)
+            #    estado.append(situacion)
 
-                if situacion == "a":
-                    print("matar maleza")
-                elif situacion == "b":
-                    print("regar planta")
-                elif situacion == "c":
-                    print("fumigar planta")
+#                if situacion == "a":
+ #                   print("matar maleza")
+  #              elif situacion == "b":
+   #                 print("regar planta")
+    #            elif situacion == "c":
+     #               print("fumigar planta")
 
 
             # t = threading.Thread(target=listener)
@@ -298,14 +295,14 @@ def Automatico ():
             #print(DisO)
             #print(DisG)
 
-            O = DisO[1]-240
+            O = DisO2[1]-240
             G = DisG[1]-240
             OKA = XX.getDistance(O , 0.005)
             GKA = YY.getDistance(G , 0.005)
             OKAZ=((OKA*DisO[2]/520))
             GKAZ=((GKA*DisG[2]/520))
             OKA=(OKAZ*math.cos(Angulo))-(DisO[2]*math.sin(Angulo))
-            OKA=DisO2[1]
+            #OKA=DisO2[1]
             GKA = (GKAZ * math.cos(Angulo)) - (DisG[2] * math.sin(Angulo))
             print(OKA)
             if(guardar!=1):
@@ -323,27 +320,27 @@ def Automatico ():
                 ACTUADORZ(np.sign(Ez)*9000)
             else:
                 ACTUADORZ(Ez)  #
-            sheet.write(Contador, 0, OKA)
-            sheet.write(Contador, 1, Ez)
+            #sheet.write(Contador, 0, OKA)
+            #sheet.write(Contador, 1, Ez)
             #E=XX.getDistance(E,0.005)
             #print(E)
-            sheet.write(Contador, 2, GKA)
-            sheet.write(Contador, 9, (time.time()-Tinicio))
-            Contador=Contador+1
+            #sheet.write(Contador, 2, GKA)
+            #sheet.write(Contador, 9, (time.time()-Tinicio))
+            contador=contador+1
             #print((O - G))
 
 
-            O = DisO[0]-320
+            O = DisO2[0]-320
             G = DisG[0]-320
             #print(-(O - G))
             OKA = XXX.getDistance(O, 0.005)
             GKA = YYY.getDistance(G, 0.005)
-            OKA=DisO2[0]
+            #OKA=DisO2[0]
 
             #OKAZ = ((OKA * DisO[0] / 520)) -----------------
             #GKAZ = ((GKA * DisG[0] / 520))
 
-            sheet.write(Contador, 3, OKA)
+            #sheet.write(Contador, 3, OKA)
             #E=(-4 * (OKA - GKA))
             TtControl = time.time()
             if (-TiControlY + TtControl) > 0.02:
@@ -356,29 +353,29 @@ def Automatico ():
                 ACTUADORY(np.sign(Ey) * 9000)
             else:
                 ACTUADORY(Ey)  #
-            sheet.write(Contador, 4, Ey)
-            sheet.write(Contador, 5, GKA)
+            #sheet.write(Contador, 4, Ey)
+            #sheet.write(Contador, 5, GKA)
 
 
-            O = DisO[2]
+            O = DisO2[2]
             G = DisG[2]
             #print(-(O - G))
             OKA = XXXX.getDistance(O, 0.005)
             GKA = YYYY.getDistance(G, 0.005)
             OKA=OKA*math.cos(Angulo)+OKAZ*math.sin(Angulo)
-            OKA=DisO2[2]
+            #OKA=DisO2[2]
             GKA=GKA*math.cos(Angulo)+GKAZ*math.sin(Angulo)
             print(OKA)
             print(GKA)
-            sheet.write(Contador, 6, OKA)
+            #sheet.write(Contador, 6, OKA)
             #E=(-10 * 0.74314482*(OKA - GKA))#1
             TtControl = time.time()
             if (-TiControlX + TtControl) > 0.02:
                 ControlX.control(GKA, round(OKA/100)*100)
                 Ex = ControlX.Uk[0, 0]
                 TiControlX = TtControl
-            sheet.write(Contador, 7, Ex)
-            sheet.write(Contador, 8, GKA)
+            #sheet.write(Contador, 7, Ex)
+            #sheet.write(Contador, 8, GKA)
             if -40 < (Ex) < 40:
                 ACTUADORX(0)  #
             elif Ex > 9000 or Ex < -9000:
@@ -390,7 +387,7 @@ def Automatico ():
             try:
                 if guardar==1:
                     guardar=0
-                    wb.save('example2.xls')
+                    #wb.save('example2.xls')
             except:
                 pass
 
