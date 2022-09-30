@@ -220,9 +220,9 @@ class Controlador:
         self.Yk=y-e
         Xek = np.matmul(self.G, self.Xek1) + (self.H*self.Uk1) + \
               np.matmul(self.Ke, (self.Yk1 - np.matmul(self.C, self.Xek1)))
-        print(Xek)
-        print(self.Uk)
-        print(self.Yk)
+        #print(Xek)
+        #print(self.Uk)
+        #print(self.Yk)
         #print(self.K)
         #self.Uk = -1*(np.matmul(self.K, np.array([[self.Yk]])))
         self.Uk = -1 * (np.matmul(self.K, Xek))
@@ -235,8 +235,12 @@ class Controlador:
 
 #ControlZ=Controlador(np.array([[1,0.0188],[0,0.8823]]),np.array([[-0.0099],[-0.9687]]),
 #                     np.array([[-284.051,14.2561]]),np.array([[1.8823],[41.412]]),np.array([[0],[0]]),0)
-ControlZ=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-939.4591]]),np.array([[1]])
-                     ,np.array([[0]]),0)#Con K=90 funciona muy bien
+ControlZ=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+                     ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
+ControlX=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+                     ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
+ControlY=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-15]]),np.array([[1]])
+                     ,np.array([[0]]),0)#Con K=90 funciona muy bien -939.4591
 #Controlador
 def Automatico ():
     global stop_threads, DisG, DisO
@@ -247,7 +251,46 @@ def Automatico ():
     guardar=0
     Tinicio=time.time()
     TiControl=Tinicio
+    TiControlY = Tinicio
+    TiControlX = Tinicio
+    Angulo=math.radians(35)##42 en la maquina
     while True:
+        
+        #time.sleep(0.001)
+        O = DisO[1]-240
+        G = DisG[1]-240
+        OKA = XX.getDistance(O , 0.005)
+        GKA = YY.getDistance(G , 0.005)
+        OKAZ=((OKA*DisO[2]/520))
+        GKAZ=((GKA*DisG[2]/520))
+        OKA=(OKAZ*math.cos(Angulo))-(DisO[2]*math.sin(Angulo))
+        #OKA=DisO2[1]
+        GKA = (GKAZ * math.cos(Angulo)) - (DisG[2] * math.sin(Angulo))
+        print("Z:")
+        rospy.loginfo(GKA)
+        
+
+        O = DisO[0]-320
+        G = DisG[0]-320
+        #print(-(O - G))
+        OKA = XXX.getDistance(O, 0.005)
+        GKA = YYY.getDistance(G, 0.005)
+        GKA = ((GKA * DisG[2] / 520))
+        print("Y: ")
+        rospy.loginfo(GKA)
+        
+
+        O = DisO[2]
+        G = DisG[2]
+        #print(-(O - G))
+        OKA = XXXX.getDistance(O, 0.005)
+        GKA = YYYY.getDistance(G, 0.005)
+        OKA=OKA*math.cos(Angulo)+OKAZ*math.sin(Angulo)
+        #OKA=DisO2[2]
+        GKA=GKA*math.cos(Angulo)+GKAZ*math.sin(Angulo)
+        print("X: ")
+        rospy.loginfo(GKA)
+        
         #time.sleep(0.001)
         if stop_threads:
             # t = threading.Thread(target=listener)
@@ -256,59 +299,96 @@ def Automatico ():
             #UObjeto()
             #print(DisO)
             #print(DisG)
-            O = DisO[1]
-            G = DisG[1]
+            O = DisO[1]-240
+            G = DisG[1]-240
             OKA = XX.getDistance(O , 0.005)
             GKA = YY.getDistance(G , 0.005)
+            OKAZ=((OKA*DisO[2]/520))
+            GKAZ=((GKA*DisG[2]/520))
+            OKA=(OKAZ*math.cos(Angulo))-(DisO[2]*math.sin(Angulo))
+            GKA = (GKAZ * math.cos(Angulo)) - (DisG[2] * math.sin(Angulo))
+            #print('PRINT GKAZ',GKA)
+            #rospy.loginfo('PRINT GKAZ '+str(GKA))
             if(guardar!=1):
                 ControlZ.setXek(np.array([[GKA]]))
             #E = (-10 * 0.66913061 * ((OKA - GKA)))
             TtControl=time.time()
             if (-TiControl+TtControl)>0.02:
-                ControlZ.control(GKA, OKA)
-                Ex = ControlZ.Uk[0,0]
+                ControlZ.control(GKA, round(OKA/100)*100+200)
+                Ez = ControlZ.Uk[0,0]
                 TiControl = TtControl
             #print(-TiControl+TtControl)
-            if -40<(Ex)<40:
-                ACTUADORZ(0)  #
-            elif Ex>5000 or Ex<-5000:
-                ACTUADORZ(np.sign(Ex)*5000)
+            if -40<(Ez)<40:
+                #ACTUADORZ(0)  #
+                pass
+            elif Ez>9000 or Ez<-9000:
+                pass
+                #ACTUADORZ(np.sign(Ez)*9000)
             else:
-                ACTUADORZ(Ex)  #
+                pass
+                #ACTUADORZ(Ez)  #
             #sheet.write(Contador, 0, OKA)
-            #sheet.write(Contador, 1, Ex)
+           # sheet.write(Contador, 1, Ez)
             #E=XX.getDistance(E,0.005)
             #print(E)
             #sheet.write(Contador, 2, GKA)
             #sheet.write(Contador, 9, (time.time()-Tinicio))
             Contador=Contador+1
             #print((O - G))
-            O = DisO[0]
-            G = DisG[0]
+            O = DisO[0]-320
+            G = DisG[0]-320
             #print(-(O - G))
             OKA = XXX.getDistance(O, 0.005)
             GKA = YYY.getDistance(G, 0.005)
+            OKAY = ((OKA * DisO[0] / 520)) 
+            GKAY = ((GKA * DisG[0] / 520))
+            #print('PRINT GKAY',GKAY)
+            #rospy.loginfo('PRINT GKAY '+GKAY)
             #sheet.write(Contador, 3, OKA)
-            E=(-4 * (OKA - GKA))
-            #sheet.write(Contador, 4, E)
-            #sheet.write(Contador, 5, GKA)
-            if -40<E<40:
-                ACTUADORY(0)
+            #E=(-4 * (OKA - GKA))
+            TtControl = time.time()
+            if (-TiControlY + TtControl) > 0.02:
+                ControlY.control(GKAY, round(OKAY/100)*100)
+                Ey = ControlY.Uk[0, 0]
+                TiControlY = TtControl
+            if -40 < (Ey) < 40:
+                pass
+                #ACTUADORY(0)  #
+            elif Ey > 9000 or Ey < -9000:
+                pass
+                #ACTUADORY(np.sign(Ey) * 9000)
             else:
-                ACTUADORY(E)#-4
+                pass
+                #ACTUADORY(Ey)  #
+            #sheet.write(Contador, 4, Ey)
+            #sheet.write(Contador, 5, GKA)
             O = DisO[2]
             G = DisG[2]
             #print(-(O - G))
             OKA = XXXX.getDistance(O, 0.005)
             GKA = YYYY.getDistance(G, 0.005)
+            OKA=OKA*math.cos(Angulo)+OKAZ*math.sin(Angulo)
+            GKA=GKA*math.cos(Angulo)+GKAZ*math.sin(Angulo)
+            #print('PRINT GKAX',GKA)
+            #rospy.loginfo('PRINT GKAX '+GKA)
             #sheet.write(Contador, 6, OKA)
-            E=(-10 * 0.74314482*(OKA - GKA))#1
-            #sheet.write(Contador, 7, E)
+            #E=(-10 * 0.74314482*(OKA - GKA))#1
+            TtControl = time.time()
+            if (-TiControlX + TtControl) > 0.02:
+                ControlX.control(GKA, round(OKA/100)*100)
+                Ex = ControlX.Uk[0, 0]
+                TiControlX = TtControl
+            #sheet.write(Contador, 7, Ex)
             #sheet.write(Contador, 8, GKA)
-            if -40<E<40:
-                ACTUADORX(0)
+            if -40 < (Ex) < 40:
+                pass
+                #ACTUADORX(0)  #
+            elif Ex > 9000 or Ex < -9000:
+                pass
+                #ACTUADORX(np.sign(Ex) * 9000)
             else:
-                ACTUADORX(E)
+                pass
+                #ACTUADORX(Ex)  #
             guardar = 1
         else:
             try:
@@ -368,7 +448,7 @@ def ACTUADORX(paquete): #Se inicia el nodo ACTUADORESPY(Actuadores python)
     rate = rospy.Rate(1000) #10 Hz
     if not rospy.is_shutdown():
         hello_str = float(paquete)
-        rospy.loginfo(hello_str)
+        #rospy.loginfo(hello_str)
         ACTUADORXP.publish(hello_str)
         rate.sleep()
 
@@ -376,7 +456,7 @@ def ACTUADORY(paquete):
     rate = rospy.Rate(1000) #10 Hz
     if not rospy.is_shutdown():
         hello_str = float(paquete)
-        rospy.loginfo(hello_str)
+        #rospy.loginfo(hello_str)
         ACTUADORYP.publish(hello_str)
         rate.sleep()
 
@@ -384,18 +464,18 @@ def ACTUADORZ(paquete):
     rate = rospy.Rate(1000) #10 Hz
     if not rospy.is_shutdown():
         hello_str = float(paquete)
-        rospy.loginfo(hello_str)
+        #rospy.loginfo(hello_str)
         ACTUADORZP.publish(hello_str)
         rate.sleep()
 
 #Para recibir de la camara
 def callback(data):
-    rospy.loginfo(data.data)
+    #rospy.loginfo(data.data)
     global DisG
     DisG=data.data
 
 def callback2(data):
-    rospy.loginfo(data.data)
+    #rospy.loginfo(data.data)
     global DisO
     DisO=data.data
 

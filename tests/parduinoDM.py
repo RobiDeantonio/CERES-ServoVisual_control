@@ -6,6 +6,8 @@ import numpy as np
 #from primesense import openni2#, nite2
 #from primesense import _openni2 as c_api
 import math
+
+
 class SensorKalman:
     def __init__(self):
         self.Q_distance=1
@@ -245,7 +247,7 @@ ControlY=Controlador(np.array([[1]]),np.array([[-0.001]]),np.array([[-9]]),np.ar
 def Automatico ():
     global stop_threads, DisG, DisO, DisO2, DisSave,GPSSave,situacion
 
-    DisO2 = [[479, 117, 1219], [1500, 180, 300], [1500, 180, 300], [1500, 180, 300]]
+    DisO2 = [500, 117, 1000]   
     DisSave = []
     estado = []
     ##situacion= jetson
@@ -261,18 +263,60 @@ def Automatico ():
     TiControlY = Tinicio
     TiControlX = Tinicio
     Angulo=math.radians(35)##42 en la maquina
+
+
     while True:
+
+
         #time.sleep(0.001)
+        O = DisO2[1]-240
+        G = DisG[1]-240
+        OKA = XX.getDistance(O , 0.005)
+        GKA = YY.getDistance(G , 0.005)
+        OKAZ=((OKA*DisO[2]/520))
+        GKAZ=((GKA*DisG[2]/520))
+        OKA=(OKAZ*math.cos(Angulo))-(DisO[2]*math.sin(Angulo))
+        #OKA=DisO2[1]
+        GKA = (GKAZ * math.cos(Angulo)) - (DisG[2] * math.sin(Angulo))
+        rospy.loginfo("Z: "+GKA)
+        print("Z: "+GKA)
+
+        O = DisO2[0]-320
+        G = DisG[0]-320
+        #print(-(O - G))
+        OKA = XXX.getDistance(O, 0.005)
+        GKA = YYY.getDistance(G, 0.005)
+        GKA = ((GKA * DisG[0] / 520))
+        rospy.loginfo("Y: "+GKA)
+        print("Y: "+GKA)
+
+        O = DisO2[2]
+        G = DisG[2]
+        #print(-(O - G))
+        OKA = XXXX.getDistance(O, 0.005)
+        GKA = YYYY.getDistance(G, 0.005)
+        OKA=OKA*math.cos(Angulo)+OKAZ*math.sin(Angulo)
+        #OKA=DisO2[2]
+        GKA=GKA*math.cos(Angulo)+GKAZ*math.sin(Angulo)
+        print("X: "+OKA)
+        rospy.loginfo("X: "+GKA)
+        
         if stop_threads:
+
+
             if contador<2000:
-                DisO2 = [459, 117, 1219]
+                DisO2 = [500, 117, 1000]
             elif contador<4000:
-                DisO2 = [428, 304, 1883]
+                DisO2 = [427, 304, 1883]
             elif contador < 6000:
                 DisO2 = [210, 302, 1873]
             elif contador < 8000:
-                DisO2 = [130, 118, 1219]
+                DisO2 = [130, 118, 1000]
             elif contador < 10000:
+                x=0
+                y=0
+                z=0
+            elif contador == 10000:
                 contador=0
 
             #if (mala):
@@ -441,7 +485,7 @@ def ACTUADORX(paquete): #Se inicia el nodo ACTUADORESPY(Actuadores python)
     rate = rospy.Rate(1000) #10 Hz
     if not rospy.is_shutdown():
         hello_str = float(paquete)
-        rospy.loginfo(hello_str)
+        #rospy.loginfo(hello_str)
         ACTUADORXP.publish(hello_str)
         rate.sleep()
 
@@ -449,7 +493,7 @@ def ACTUADORY(paquete):
     rate = rospy.Rate(1000) #10 Hz
     if not rospy.is_shutdown():
         hello_str = float(paquete)
-        rospy.loginfo(hello_str)
+        #rospy.loginfo(hello_str)
         ACTUADORYP.publish(hello_str)
         rate.sleep()
 
@@ -457,18 +501,18 @@ def ACTUADORZ(paquete):
     rate = rospy.Rate(1000) #10 Hz
     if not rospy.is_shutdown():
         hello_str = float(paquete)
-        rospy.loginfo(hello_str)
+        #rospy.loginfo(hello_str)
         ACTUADORZP.publish(hello_str)
         rate.sleep()
 
 #Para recibir de la camara
 def callback(data):
-    rospy.loginfo(data.data)
+    #rospy.loginfo(data.data)
     global DisG
     DisG=data.data
 
 def callback2(data):
-    rospy.loginfo(data.data)
+    #rospy.loginfo(data.data)
     global DisO
     DisO=data.data
 

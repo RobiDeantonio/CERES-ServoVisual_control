@@ -1,4 +1,5 @@
-#!/home/johann/catkin_ws/src/tests/CamaraDistancia/bin/python3
+#!/home/regulus/catkin_ws/src/CERES-ServoVisual_control/tests/CamaraDistancia/bin/python3
+
 '''
 Created on 19Jun2015
 Stream rgb and depth video side-by-side using openni2 opencv-python (cv2).
@@ -41,7 +42,8 @@ from std_msgs.msg import Float32
 # OMAP
 # dist = '/home/carlos/Install/kinect/OpenNI2-Linux-ARM-2.2/Redist/'
 # Linux
-dist ='/home/johann/Descargas/OppenNI/OpenNI-Linux-x64-2.2/Redist'
+dist ='/home/regulus/Downloads/OpenNI/Redist'
+
 
 def DistanciaObjeto(paquete):
     pub = rospy.Publisher("DistanciaObjeto", Float32, queue_size=10)
@@ -108,7 +110,7 @@ def get_rgb():
     """
     Returns numpy 3L ndarray to represent the rgb image.
     """
-    bgr = np.fromstring(rgb_stream.read_frame().get_buffer_as_uint8(), dtype=np.uint8).reshape(480,640,3)
+    bgr = np.frombuffer(rgb_stream.read_frame().get_buffer_as_uint8(), dtype=np.uint8).reshape(480,640,3)
     #bgr=cv2.resize(bgr,(640,480),3)
     rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
     hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
@@ -132,7 +134,7 @@ def get_depth():
         .reshape(240,320) # Used to MATCH RGB Image (OMAP/ARM)
                 Requires .set_video_mode
     """
-    dmap = np.fromstring(depth_stream.read_frame().get_buffer_as_uint16(), dtype=np.uint16).reshape(480,
+    dmap = np.frombuffer(depth_stream.read_frame().get_buffer_as_uint16(), dtype=np.uint16).reshape(480,
                                                                                                     640)  # Works & It's FAST
     d4d = np.uint8(dmap.astype(float) * 255 / 2 ** 12 - 1)  # Correct the range. Depth images are 12bits
     d4d = 255 - cv2.cvtColor(d4d, cv2.COLOR_GRAY2RGB)
@@ -183,14 +185,14 @@ done = False
 kernelC=np.ones((5,5),np.uint8)
 def empty(a):
     pass
-cv2.namedWindow("HSV")
-cv2.resizeWindow("HSV",640,240)
-cv2.createTrackbar("HUE Min","HSV",0,179,empty)
-cv2.createTrackbar("HUE Max","HSV",179,179,empty)
-cv2.createTrackbar("SAT Min","HSV",0,255,empty)
-cv2.createTrackbar("SAT Max","HSV",255,255,empty)
-cv2.createTrackbar("VALUE Min","HSV",0,255,empty)
-cv2.createTrackbar("VALUE Max","HSV",255,255,empty)
+#cv2.namedWindow("HSV")
+#cv2.resizeWindow("HSV",640,240)
+#cv2.createTrackbar("HUE Min","HSV",0,179,empty)
+#cv2.createTrackbar("HUE Max","HSV",179,179,empty)
+#cv2.createTrackbar("SAT Min","HSV",0,255,empty)
+#cv2.createTrackbar("SAT Max","HSV",255,255,empty)
+#cv2.createTrackbar("VALUE Min","HSV",0,255,empty)
+#cv2.createTrackbar("VALUE Max","HSV",255,255,empty)
 while not done:
     key = cv2.waitKey(1) & 255
     ## Read keystrokes
@@ -221,6 +223,7 @@ while not done:
     mascara = cv2.inRange(rgb, rangomin, rangomax)
     opening = cv2.morphologyEx(mascara, cv2.MORPH_OPEN, kernelC)
     x, y, w, h = cv2.boundingRect(opening)
+
 
 
     # canvas

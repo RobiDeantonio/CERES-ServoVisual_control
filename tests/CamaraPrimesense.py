@@ -1,4 +1,5 @@
-#!/home/gidam/catkin_ws/src/CERES-ServoVisual_control/tests/CamaraDistancia/bin/python3
+#!/home/regulus/catkin_ws/src/CERES-ServoVisual_control/tests/CamaraDistancia/bin/python3
+
 '''
 Created on 19Jun2015
 Stream rgb and depth video side-by-side using openni2 opencv-python (cv2).
@@ -46,11 +47,11 @@ tracker = cv2.TrackerCSRT_create()
 # OMAP
 # dist = '/home/carlos/Install/kinect/OpenNI2-Linux-ARM-2.2/Redist/'
 # Linux
-dist ='/home/gidam/Downloads/oppenni/OpenNI-Linux-x64-2.2/Redist'
+dist ='/home/regulus/Downloads/OpenNI/Redist'
 
 def DistanciaObjeto(paquete):
     pub = rospy.Publisher("DistanciaObjeto", Float32MultiArray, queue_size=1)
-    rospy.init_node("CamaraPrimeSense",anonymous=True)#Se inicia el nodo ACTUADORESPY(Actuadores python)
+    rospy.init_node("CamaraPrimeSense",anonymous=True)
     rate = rospy.Rate(1000) #100 Hz
     if not rospy.is_shutdown():
         hello_str = Float32MultiArray()
@@ -61,7 +62,7 @@ def DistanciaObjeto(paquete):
 
 def DistanciaGripper(paquete):
     pub = rospy.Publisher("DistanciaGripper", Float32MultiArray, queue_size=1)
-    rospy.init_node("CamaraPrimeSense",anonymous=True)#Se inicia el nodo ACTUADORESPY(Actuadores python)
+    rospy.init_node("CamaraPrimeSense",anonymous=True)
     rate = rospy.Rate(1000) #100 Hz
     if not rospy.is_shutdown():
         hello_str = Float32MultiArray()
@@ -121,10 +122,6 @@ def get_rgb():
     hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
     return rgb, hsv
 
-
-# get_rgb
-
-
 def get_depth():
     """
     Returns numpy ndarrays representing the raw and ranged depth images.
@@ -145,10 +142,6 @@ def get_depth():
     d4d = 255 - cv2.cvtColor(d4d, cv2.COLOR_GRAY2RGB)
     return dmap, d4d
 
-
-# get_depth
-
-
 def mask_rgbd(d4d, rgb, th=0):
     """
     Overlays images and uses some blur to slightly smooth the mask
@@ -160,9 +153,6 @@ def mask_rgbd(d4d, rgb, th=0):
     idx = (mask > th)
     mask[idx] = rgb[idx]
     return mask
-
-
-# mask_rgbd
 
 def getContours(img,imgContour):
     contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -184,27 +174,28 @@ def getContours(img,imgContour):
             return bbox
 
 
-
 ## main loop
 s = 0
 done = False
 kernelC=np.ones((5,5),np.uint8)
 def empty(a):
     pass
-cv2.namedWindow("HSV")
-cv2.resizeWindow("HSV",640,240)
-cv2.createTrackbar("HUE Min","HSV",0,179,empty)
-cv2.createTrackbar("HUE Max","HSV",179,179,empty)
-cv2.createTrackbar("SAT Min","HSV",0,255,empty)
-cv2.createTrackbar("SAT Max","HSV",255,255,empty)
-cv2.createTrackbar("VALUE Min","HSV",0,255,empty)
-cv2.createTrackbar("VALUE Max","HSV",255,255,empty)
-cv2.createTrackbar("R Min","HSV",0,255,empty)
-cv2.createTrackbar("R Max","HSV",255,255,empty)
-cv2.createTrackbar("G Min","HSV",0,255,empty)
-cv2.createTrackbar("G Max","HSV",255,255,empty)
-cv2.createTrackbar("B Min","HSV",0,255,empty)
-cv2.createTrackbar("B Max","HSV",255,255,empty)
+
+#cv2.namedWindow("HSV")
+#cv2.resizeWindow("HSV",640,240)
+#cv2.createTrackbar("HUE Min","HSV",0,179,empty)
+#cv2.createTrackbar("HUE Max","HSV",179,179,empty)
+#cv2.createTrackbar("SAT Min","HSV",0,255,empty)
+#cv2.createTrackbar("SAT Max","HSV",255,255,empty)
+#cv2.createTrackbar("VALUE Min","HSV",0,255,empty)
+#cv2.createTrackbar("VALUE Max","HSV",255,255,empty)
+#cv2.createTrackbar("R Min","HSV",0,255,empty)
+#cv2.createTrackbar("R Max","HSV",255,255,empty)
+#cv2.createTrackbar("G Min","HSV",0,255,empty)
+#cv2.createTrackbar("G Max","HSV",255,255,empty)
+#cv2.createTrackbar("B Min","HSV",0,255,empty)
+#cv2.createTrackbar("B Max","HSV",255,255,empty)
+
 FramesContador=1000
 def drawBox(img,bbox):
     global enviocont
@@ -252,7 +243,6 @@ while not done:
 
     # canvas
 
-
     ## Distance map
     if int(x+w/2)>639:
         XO=639
@@ -269,11 +259,12 @@ while not done:
 
     if enviocont2>0:
         DistanciaObjeto([XO,YO,dmap[YO,XO]])#Se esta vectorizando
+        # cv2.putText(rgb, "P " + str(int(dmap[YO,XO])), (x + w + 20, y + 45), cv2.FONT_HERSHEY_COMPLEX, 3,
+        #             (0, 255, 0), 2)
         enviocont2=0
     enviocont2=enviocont2+1
     print('VERDE is {} mm away'.format(dmap[YO,XO]))
     print('Pixel X:'+str(YO)+' Y:'+str(XO))
-
 
     ##Detectar Gripper
     rangomax = np.array([145, 255, 255])
